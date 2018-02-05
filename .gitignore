@@ -103,3 +103,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# large file
+gg2018.json
