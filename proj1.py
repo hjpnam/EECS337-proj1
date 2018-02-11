@@ -50,3 +50,40 @@ def get_names(words):
 	return tweet_names
 
 print get_names(tokenized_data)
+
+def extract_award_tweets():
+	helper_words = set(['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini'])
+	
+	award_tweets = []
+	
+	for tweet in data:
+		tweet = process_tweet(tweet)
+		if (len(set(tweet)&(helper_words)) >= 2):
+			award_tweets.append(tweet)
+
+	return award_tweets
+
+def extract_awards():
+	helper_words = set(['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini'])
+	award_tweets = extract_award_tweets()
+	awards = []
+	for tweet in award_tweets:
+		i = len(tweet) - 1
+		for helper in helper_words:
+			if helper in tweet:
+				j = tweet.index(helper)
+				if j < i:
+					i = j
+		arr = []
+		for word in tweet:
+			if word in helper_words and tweet.index(word) >= i:
+				arr.append(word.lower())
+		
+		awardStr = ' '.join(arr)
+		if awardStr not in awards:
+			awards.append(awardStr)
+	for award in awards:
+		if awards.split()[0] != 'best':
+			awards.remove(award)
+	
+	return awards
