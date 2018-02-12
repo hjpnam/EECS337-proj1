@@ -16,8 +16,6 @@ OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'bes
 data = json.load(open('gg2018.json'))
 data = [tweet['text'] for tweet in data]
 
-tokenized_data = ["Allison", "Sun", "Meryl", "Streep", "brad", "pitt", "chris", "evans", "Golden", "Globes" "sameena", "william", "peter"]
-
 def process_tweet(tweet):
 	tweet = re.sub(r"http\S+", "", tweet)
 	#tweet = re.sub(r"#\S+", "", tweet)
@@ -27,11 +25,6 @@ def process_tweet(tweet):
 
 	filtered = [w for w in word_tokens if not w in stop_words]
 	return filtered
-
-def get_awards():
-	helper_list = ['best actor','best actress','best mini-series','performance','drama']
-
-	tokenized_data = ["Allison", "Sun", "Meryl", "Streep", "brad", "pitt", "chris", "evans", "Golden", "Globes" "sameena", "william", "peter"]
 
 def get_names(words):
 	names = nltk.corpus.names
@@ -56,9 +49,9 @@ print get_names(tokenized_data)
 
 def extract_award_tweets():
 	helper_words = set(['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini'])
-	
+
 	award_tweets = []
-	
+
 	for tweet in data:
 		tweet = process_tweet(tweet)
 		if (len(set(tweet)&(helper_words)) >= 2):
@@ -81,12 +74,12 @@ def extract_awards():
 		for word in tweet:
 			if word in helper_words and tweet.index(word) >= i:
 				arr.append(word.lower())
-		
+
 		awardStr = ' '.join(arr)
 		if awardStr not in awards:
 			awards.append(awardStr)
 	for award in awards:
 		if awards.split()[0] != 'best':
 			awards.remove(award)
-	
+
 	return awards
