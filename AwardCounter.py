@@ -45,10 +45,3 @@ class AwardCounter:
 
     def get_all(self):
         return self.awards
-
-tester = AwardCounter()
-tester.add_award("Best Actor")
-tester.increment("Best Actor", "Gary Oldman")
-tester.increment("Best Actor", "Gary Oldman")
-tester.increment("Best Actor", "Timothee Chalamet")
-print tester.get_all()
