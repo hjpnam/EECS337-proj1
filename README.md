@@ -1,8 +1,9 @@
-# EECS337-proj1
+# EECS337 Project 1
 
-## 3rd Party Packages imported:
- -nltk
- -nltk.corpus
- -nltk.tokenize
- -Wikipedia
+## 3rd Party Packages Imported:
+ - nltk
+ - nltk.corpus
+ - nltk.tokenize
+ - requests (to install: pip3 install requests)
+ - Wikipedia (tentative)
  
