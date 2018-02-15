@@ -1,4 +1,4 @@
-class AwardActorCounter:
+class AwardCounter:
 
     def __init__(self):
         self.awards = {}
@@ -10,17 +10,27 @@ class AwardActorCounter:
             self.awards[award] = {}
             return True
 
-    def add_actor_to_award(self, award, actor):
+    def increment(self, award, actor):
         if award not in self.awards:
             self.awards[award] = {}
-        self.awards[award][actor] = 0
-        return True
-
-    def increment_award_actor(self, award, actor):
-        if award not in self.awards or actor not in self.awards[award]:
-            return False
+        if actor not in self.awards[award]:
+            self.awards[award][actor] = 0
         self.awards[award][actor] += 1
         return True
+
+	# def increment(self, award, actor):
+	# 	if award not in self.awards:
+	# 		self.awards[award] = {}
+	# 	if actor not in self.awards[award]:
+	# 		self.awards[award][actor] = 0
+	# 	self.awards[award][actor] += 1
+	# 	return True
+    #
+    # def increment_award_actor(self, award, actor):
+    #     if award not in self.awards or actor not in self.awards[award]:
+    #         return False
+    #     self.awards[award][actor] += 1
+    #     return True
 
     def get_actors_for_award(self, award):
         if award not in self.awards:
