@@ -4,20 +4,19 @@ from nltk.tokenize import word_tokenize
 import json
 import re
 from difflib import SequenceMatcher
-import wikipedia
 
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
 data = json.load(open('gg2018.json'))
-data = [tweet['text'] for tweet in data]
+data = [tweet['text'] for tweet in data[400000:405000]]
 
 def process_tweet(tweet):
 	tweet = re.sub(r"http\S+", "", tweet)
 	#tweet = re.sub(r"#\S+", "", tweet)
 	#tweet = re.sub(r"@\S+", "", tweet)
 	word_tokens = word_tokenize(tweet)
-	stop_words = Set(stopwords.words('english')) | Set(["GoldenGlobes", 'goldenglobes', 'Goldenglobes', 'Golden','golden','globes','Globes', 'RT', 'I', "Oscars", "oscars", "Awards", "awards","!",",",".","?",":",';',"#","@"])
+	stop_words = set(stopwords.words('english')) | set(["GoldenGlobes", 'goldenglobes', 'Goldenglobes', 'Golden','golden','globes','Globes', 'RT', 'I', "Oscars", "oscars", "Awards", "awards","!",",",".","?",":",';',"#","@"])
 
 	filtered = [w for w in word_tokens if not w in stop_words]
 	return filtered
@@ -41,7 +40,7 @@ def get_names(words):
 				tweet_names.append(first_name)
 	return tweet_names
 
-print get_names(tokenized_data)
+
 
 def extract_award_tweets():
 	helper_words = set(['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini'])
@@ -56,7 +55,10 @@ def extract_award_tweets():
 	return award_tweets
 
 def extract_awards():
-	helper_words = set(['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini'])
+	helper_words = ['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini','limited','Limited','Series','series','Cecil B. DeMille Award','cecil b. demille Award', 'Cecil B. DeMille']
+	
+	prepositions = ['-', 'Or','or','By','by','An','an','In','in','A','a', 'any', 'Any', 'for','For','made','Made',',']
+	
 	award_tweets = extract_award_tweets()
 	awards = []
 	for tweet in award_tweets:
@@ -67,15 +69,39 @@ def extract_awards():
 				if j < i:
 					i = j
 		arr = []
+		
 		for word in tweet:
-			if word in helper_words and tweet.index(word) >= i:
+			if (word in helper_words or word in prepositions) and tweet.index(word) >= i:
 				arr.append(word.lower())
-
-		awardStr = ' '.join(arr)
-		if awardStr not in awards:
-			awards.append(awardStr)
-	for award in awards:
-		if awards.split()[0] != 'best':
-			awards.remove(award)
-
+			else: 
+				continue
+		
+		if((arr[0] == 'best' or arr[0] == 'Best') and arr[-1] in helper_words):
+			awardStr = ' '.join(arr)
+			if awardStr not in awards:
+				awards.append(awardStr)
+		
+	remove = []
+	for i in range(0, len(awards)-1):
+		for j in range(i, len(awards)):
+			award1 = awards[i]
+			award2 = awards[j]
+			
+			if(SequenceMatcher(None,award1,award2).ratio() > 0.3):
+				if not('actor' in award1 and 'actress' in award2 or 'actress' in award1 and 'actor' in award2):
+					remove.append(award1)
+	
+	remove = set(remove)
+	
+	for r in remove:
+		if r in awards:
+			awards.remove(r)
+		
 	return awards
+
+
+	
+x = extract_awards()
+print (x)
+print (len(x))
+
