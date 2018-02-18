@@ -42,7 +42,7 @@ def getMovies(attributes = {}, save = False, default = defaults):
             print(i)
             url += "&page=" + str(i)
             if (i % 25 == 0):
-                time.sleep(10)
+                time.sleep(3)
             data = requests.get(url)
 
             if data.status_code != 200:
