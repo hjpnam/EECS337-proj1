@@ -7,16 +7,16 @@ from AwardCounter import *
 from MovieDBRequests import *
 from results import *
 
-OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
-
-#SHORT_OFFICIAL_AWARDS = ['Cecil B. Demille Award', 'Best Motion Picture Drama', 'Best Performance by an Actress in a Motion Picture Drama', 'Best Performance by an Actor in a Motion Picture Drama', 'best motion picture comedy', 'best performance by an actress in a motion picture comedy', 'best performance by an actor in a motion picture comedy', 'best animated', 'best foreign language', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director', 'best screenplay', 'best original score', 'best original song', 'best television series drama', 'best performance by an actress in a television series drama', 'best performance by an actor in a television series drama', 'best television series comedy', 'best performance by an actress in a television series comedy', 'best performance by an actor in a television series comedy', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series', 'best performance by an actor in a supporting role in a series']
 
 def tokenize_awards():
 	stop_words = set(['Motion', 'motion', 'performance','Performance', 'by','By','an','An', 'a', 'role','Role','A','original','Original','series','Series','for','For',u'\u2013','in','In','Or','or','Award','award'])
 	awards = get_awards()
 	tokenized_awards = []
 	for i in range(len(awards)):
-		tokenized_awards.append(set(word_tokenize(awards[i].lower())) - stop_words)
+		tk = word_tokenize(awards[i].lower())
+		tk[tk.index('television')] = 'tv'
+				
+		tokenized_awards.append(set(tk) - stop_words)
 	return tokenized_awards
 
 def process_tweet(tweet):
