@@ -16,7 +16,10 @@ def tokenize_awards():
 	awards = get_awards()
 	tokenized_awards = []
 	for i in range(len(awards)):
-		tokenized_awards.append(set(word_tokenize(awards[i].lower())) - stop_words)
+		tk = word_tokenize(awards[i].lower())
+		tk[tk.index('television')] = 'tv'
+				
+		tokenized_awards.append(set(tk) - stop_words)
 	return tokenized_awards
 
 def process_tweet(tweet):
