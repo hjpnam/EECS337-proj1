@@ -31,7 +31,7 @@ def get_people_names(words):
 	# 			tweet_names.append(first_name)
 	# return tweet_names
 
-    stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Cecil', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man','']
+    stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man']
     joined = ' '.join(words)
     proper = re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)', joined)
     names = []
@@ -42,8 +42,17 @@ def get_people_names(words):
             local = local + proper[i+1]
             i += 1
         splitted = local.split(' ')
-        if (len(splitted) == 2 and splitted[0] not in stopwords and splitted[1] not in stopwords):
-            names.append(' '.join(splitted))
+        if (len(splitted) != 2 or splitted[0] in stopwords or splitted[1] in stopwords):
+            continue
+        try:
+            result = wikipedia.page(local)
+        except:
+            try:
+                result = wikipedia.page(local + "(actor)")
+            except:
+                continue
+				
+				names.append(local)
 
     return names
 
@@ -62,11 +71,8 @@ def get_movie_names_simple(tweet):
         movie_words.append(words)
     if (' '.join(movie_words) in tmdb.keys()):
         return ' '.join(movie_words)
-
-print (get_movie_names_simple("Glad I watched The Handmaid's Tale"))
-
-def get_proper_nouns(tweet):
-	result = get_people_names(tweet)
+    else:
+        return ''
 
 
 def get_hosts(tweets):

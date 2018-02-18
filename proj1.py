@@ -8,8 +8,16 @@ from results import *
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
-SHORT_OFFICIAL_AWARDS = ['Cecil B. Demille Award', 'Best Motion Picture Drama', 'Best Performance by an Actress in a Motion Picture Drama', 'Best Performance by an Actor in a Motion Picture Drama', 'best motion picture comedy', 'best performance by an actress in a motion picture comedy', 'best performance by an actor in a motion picture comedy', 'best animated', 'best foreign language', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director', 'best screenplay', 'best original score', 'best original song', 'best television series drama', 'best performance by an actress in a television series drama', 'best performance by an actor in a television series drama', 'best television series comedy', 'best performance by an actress in a television series comedy', 'best performance by an actor in a television series comedy', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series', 'best performance by an actor in a supporting role in a series']
+#SHORT_OFFICIAL_AWARDS = ['Cecil B. Demille Award', 'Best Motion Picture Drama', 'Best Performance by an Actress in a Motion Picture Drama', 'Best Performance by an Actor in a Motion Picture Drama', 'best motion picture comedy', 'best performance by an actress in a motion picture comedy', 'best performance by an actor in a motion picture comedy', 'best animated', 'best foreign language', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director', 'best screenplay', 'best original score', 'best original song', 'best television series drama', 'best performance by an actress in a television series drama', 'best performance by an actor in a television series drama', 'best television series comedy', 'best performance by an actress in a television series comedy', 'best performance by an actor in a television series comedy', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series', 'best performance by an actor in a supporting role in a series']
 
+def tokenize_awards():
+	stop_words = set(['Motion', 'motion', 'performance','Performance', 'by','By','an','An', 'a', 'role','Role','A','original','Original','series','Series','for','For','-','in','In','Or','or','Award','award'])
+	awards = get_awards()
+	tokenized_awards = []
+	for i in range(len(awards)):
+		tokenized_awards.append(set(awards.lower().word_tokenize()) - stop_words)
+	return tokenized_awards
+	
 def process_tweet(tweet):
 	tweet = re.sub(r"http\S+", "", tweet)
 	#tweet = re.sub(r"#\S+", "", tweet)
@@ -25,7 +33,7 @@ def process_tweet(tweet):
 
 
 	return word_tokens
-
+'''
 def extract_award_tweets(tweets):
 	helper_words = set(['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini'])
 
@@ -37,7 +45,7 @@ def extract_award_tweets(tweets):
 			award_tweets.append(tweet)
 
 	return award_tweets
-
+'''
 def get_winners(tweets):
 	presenters = AwardCounter()
 	winners = AwardCounter()
@@ -45,26 +53,26 @@ def get_winners(tweets):
 	winners_result = {}
 	nominees_result = {}
 
-	SHORT = get_awards()
+	awards = get_awards()
+	award_tokenized = tokenize_awards()
 
-	for award in SHORT:
+	for i in range(len(award_tokenized)):
 		presenters.add_award(award)
 		winners.add_award(award)
 
 	for tweet in tweets:
-		tweet2 = ' '.join(tweet)
-		for award in SHORT:
-			if award.lower() in tweet2.lower():
+		tweet2 = [word.lower() for word in tweet]
+		for i in range(len(award_tokenized)):
+			if len(set(tweet2).intersection(award_tokenized[i])) == len(award_tokenized[i]):
 				proper_nouns = get_people_names(tweet)
-				if "present" in tweet2 or "Present" in tweet2:
+				if "present" in ' '.join(tweet2):
 					for noun in proper_nouns:
-						presenters.increment(award,noun)
+						presenters.increment(awards[i],noun)
 				else:
 					for noun in proper_nouns:
-						winners.increment(award, noun)
-	#print(presenters.get_all())
-
-	for award in SHORT:
+						winners.increment(awards[i], noun)
+						
+	for award in awards:
 		#presenters_result[award] = presenters.get_max_actor(award)[0]
 		#winners_result[award] = winners.get_max_actor(award)[0]
 		nominees_result[award] = winners.get_max_n_actors(award, 5)
@@ -90,6 +98,7 @@ def get_awards():
 		short_award = short_award.decode('utf-8')
 		short_awards.append(short_award)
 	print "short_awards len", len(short_awards)
+
 	return short_awards
 
 def main():
