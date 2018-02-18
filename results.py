@@ -39,9 +39,13 @@ def get_movie_names_simple(tweet):
 	capitalized_words = set(re.findall('([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)', tweet))
 	for words in capitalized_words:
         # need to ignore prepositions, "the", people names
+		
 		movie.append(words)
 	return movie
 
+def get_proper_nouns(tweet):
+	result = get_people_names(tweet)
+	
 	
 def get_hosts(tweets):
     hosts = []

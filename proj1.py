@@ -13,9 +13,15 @@ def process_tweet(tweet):
 	tweet = re.sub(r"http\S+", "", tweet)
 	#tweet = re.sub(r"#\S+", "", tweet)
 	#tweet = re.sub(r"@\S+", "", tweet)
-	word_tokens = word_tokenize(tweet)
 	#stop_words = set(stopwords.words('english')) | set(["GoldenGlobes", 'goldenglobes', 'Goldenglobes', 'Golden','golden','globes','Globes', 'RT', 'I', "Oscars", "oscars","!",",",".","?",';',"#","@"]) - set(['in','In','Out','out','by','By','for','For','From','from','over','Over','under','Under'])
-	stop_words = set(['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment'])
+	stop_words = ['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment']
+	
+	for stop in stop_words:
+		if stop in tweet:
+			tweet.replace(stop, '')
+	
+	word_tokens = word_tokenize(tweet)
+	
 	
 	return word_tokens
 
