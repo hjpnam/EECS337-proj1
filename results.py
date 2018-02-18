@@ -64,19 +64,18 @@ def get_movie_names_simple(tweet):
     capitalized_words = []
     movie_words = []
     tmdb = json.load(open('./files/movies.json'))
+    movie = []
     if '\'' in tweet:
-        capitalized_words = set(re.findall('([A-Za-z]+\s[A-Za-z]+\'[a-z]\s[A-Za-z]+)', tweet))
+        capitalized_words = re.findall(r'([A-Za-z]+\s[A-Za-z]+\'[a-z]\s[A-Za-z]+)', ' '.join(tweet))
     else:
-        capitalized_words = set(re.findall('([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)', tweet))
+        capitalized_words = re.findall(r'([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+[a-z]+)*(?:\s+[A-Z][a-z]+)*)', ' '.join(tweet))
 
     for words in capitalized_words:
         # need to ignore prepositions, "the", people names
         movie_words.append(words)
     if (' '.join(movie_words) in tmdb.keys()):
-        return ' '.join(movie_words)
-    else:
-        return ''
-
+        movie.append(' '.join(movie_words))
+    return movie
 
 def get_hosts(tweets):
     hosts = []
