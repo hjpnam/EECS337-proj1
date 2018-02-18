@@ -45,14 +45,16 @@ def get_winners(tweets):
 	winners_result = {}
 	nominees_result = {}
 
-	for award in OFFICIAL_AWARDS:
+	SHORT = get_awards()
+
+	for award in SHORT:
 		presenters.add_award(award)
 		winners.add_award(award)
 
 	for tweet in tweets:
 		tweet2 = ' '.join(tweet)
-		for award in OFFICIAL_AWARDS:
-			if award in tweet2.lower():
+		for award in SHORT:
+			if award.lower() in tweet2.lower():
 				proper_nouns = get_people_names(tweet)
 				if "present" in tweet2 or "Present" in tweet2:
 					for noun in proper_nouns:
@@ -62,7 +64,7 @@ def get_winners(tweets):
 						winners.increment(award, noun)
 	#print(presenters.get_all())
 
-	for award in OFFICIAL_AWARDS:
+	for award in SHORT:
 		#presenters_result[award] = presenters.get_max_actor(award)[0]
 		#winners_result[award] = winners.get_max_actor(award)[0]
 		nominees_result[award] = winners.get_max_n_actors(award, 5)
@@ -102,22 +104,22 @@ def main():
 	SHORT = get_awards()
 	awards_covered = []
 	num_tweet = 0
-	for tweet in tweets:
-		tweet2 = ' '.join(tweet)
-		for award in SHORT:
-			if award.lower() in tweet2.lower():
-				num_tweet+=1
-				if award not in awards_covered:
-					awards_covered.append(award)
+	# for tweet in tweets:
+	# 	tweet2 = ' '.join(tweet)
+	# 	for award in SHORT:
+	# 		if award.lower() in tweet2.lower():
+	# 			num_tweet+=1
+	# 			if award not in awards_covered:
+	# 				awards_covered.append(award)
+	#
+	# for award in awards_covered:
+	# 	print "award is found", award
 
-	for award in awards_covered:
-		print "award is found", award
-
-	print "num", num_tweet
-	print "awards counted", len(awards_covered)
+	# print "num", num_tweet
+	# print "awards counted", len(awards_covered)
 
 	#award_tweets = extract_award_tweets(tweets)
-	# print get_winners(tweets)
+	print get_winners(tweets)
 	#print(award_tweets)
 
 main()
