@@ -11,13 +11,13 @@ OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'bes
 #SHORT_OFFICIAL_AWARDS = ['Cecil B. Demille Award', 'Best Motion Picture Drama', 'Best Performance by an Actress in a Motion Picture Drama', 'Best Performance by an Actor in a Motion Picture Drama', 'best motion picture comedy', 'best performance by an actress in a motion picture comedy', 'best performance by an actor in a motion picture comedy', 'best animated', 'best foreign language', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director', 'best screenplay', 'best original score', 'best original song', 'best television series drama', 'best performance by an actress in a television series drama', 'best performance by an actor in a television series drama', 'best television series comedy', 'best performance by an actress in a television series comedy', 'best performance by an actor in a television series comedy', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series', 'best performance by an actor in a supporting role in a series']
 
 def tokenize_awards():
-	stop_words = set(['Motion', 'motion', 'performance','Performance', 'by','By','an','An', 'a', 'role','Role','A','original','Original','series','Series','for','For','-','in','In','Or','or','Award','award'])
+	stop_words = set(['Motion', 'motion', 'performance','Performance', 'by','By','an','An', 'a', 'role','Role','A','original','Original','series','Series','for','For',u'\u2013','in','In','Or','or','Award','award'])
 	awards = get_awards()
 	tokenized_awards = []
 	for i in range(len(awards)):
-		tokenized_awards.append(set(awards.lower().word_tokenize()) - stop_words)
+		tokenized_awards.append(set(word_tokenize(awards[i].lower())) - stop_words)
 	return tokenized_awards
-	
+
 def process_tweet(tweet):
 	tweet = re.sub(r"http\S+", "", tweet)
 	#tweet = re.sub(r"#\S+", "", tweet)
@@ -57,8 +57,8 @@ def get_winners(tweets):
 	award_tokenized = tokenize_awards()
 
 	for i in range(len(award_tokenized)):
-		presenters.add_award(award)
-		winners.add_award(award)
+		presenters.add_award(awards[i])
+		winners.add_award(awards[i])
 
 	for tweet in tweets:
 		tweet2 = [word.lower() for word in tweet]
@@ -71,7 +71,7 @@ def get_winners(tweets):
 				else:
 					for noun in proper_nouns:
 						winners.increment(awards[i], noun)
-						
+
 	for award in awards:
 		#presenters_result[award] = presenters.get_max_actor(award)[0]
 		#winners_result[award] = winners.get_max_actor(award)[0]

@@ -44,15 +44,18 @@ def get_people_names(words):
         splitted = local.split(' ')
         if (len(splitted) != 2 or splitted[0] in stopwords or splitted[1] in stopwords):
             continue
-        try:
-            result = wikipedia.page(local)
-        except:
-            try:
-                result = wikipedia.page(local + "(actor)")
-            except:
-                continue
-				
-				names.append(local)
+
+        result = wikipedia.search(local)
+        if len(result) != 0 and local in result[0]:
+            print('adding 1')
+            names.append(local)
+            continue
+
+        result = wikipedia.search(local + " (actor)")
+        if len(result) != 0 and local + " (actor)" in result[0]:
+            print('adding 2')
+            names.append(local)
+            continue
 
     return names
 
