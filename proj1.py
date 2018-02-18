@@ -41,6 +41,10 @@ def get_winners(tweets):
 	winners_result = {}
 	nominees_result = {}
 
+	hosts = []
+	cnt = Counter()
+	host_names = []
+
 	awards = get_awards()
 	award_tokenized = tokenize_awards()
 
@@ -53,6 +57,11 @@ def get_winners(tweets):
 			continue
 		tweet = process_tweet(tweet['text'])
 		tweet2 = [word.lower() for word in tweet]
+		for word in tweet:
+			if "host" in word or "Host" in word:
+				host_names.append(get_people_names(tweet))
+				break
+
 		for i in range(len(award_tokenized)):
 			if len(set(tweet2).intersection(award_tokenized[i])) == len(award_tokenized[i]):
 				if ('actor' in award_tokenized[i] or 'actress' in award_tokenized[i] or 'director' in award_tokenized[i] or 'score' in award_tokenized[i] or 'screenplay' in award_tokenized[i] or 'cecil' in award_tokenized[i]):
@@ -75,12 +84,17 @@ def get_winners(tweets):
 						for noun in proper_nouns:
 							winners.increment(awards[i], noun)
 
+	for group in host_names:
+		for name in group:
+			cnt[name]+=1
+	host = (cnt.most_common(1))[0][0]
+
 	for award in awards:
 		#presenters_result[award] = presenters.get_max_actor(award)[0]
 		#winners_result[award] = winners.get_max_actor(award)[0]
 		nominees_result[award] = winners.get_max_n_actors(award, 5)
 
-	return presenters_result, winners_result, nominees_result
+	return presenters_result, winners_result, nominees_result, host
 
 def get_awards():
 	golden_globes = wikipedia.page("Golden Globe Award")
@@ -100,7 +114,6 @@ def get_awards():
 		short_award = short_award.split("Film", 1)[0]
 		short_award = short_award.decode('utf-8')
 		short_awards.append(short_award)
-	print "short_awards len", len(short_awards)
 
 	return short_awards
 

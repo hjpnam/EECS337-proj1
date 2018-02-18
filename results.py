@@ -55,24 +55,6 @@ def get_movie_names_simple(tweet):
             movie.append(key)
     return movie
 
-def get_hosts(tweets):
-    hosts = []
-    cnt = Counter()
-    host_names = []
-
-    for tweet in tweets:
-        for word in tweet:
-            if "host" in word or "Host" in word:
-                host_names.append(get_people_names(tweet))
-                break
-
-    for group in host_names:
-        for name in group:
-            cnt[name]+=1
-
-    hosts = cnt.most_common(1)
-    return hosts[0][0]
-
 def get_handle_names(tweet):
     handles = []
     handle_names = []
