@@ -1,12 +1,12 @@
 import requests
-import json, io
+import json, io, time
 
 api_key = "2dc7ef3006499011242fcfbe603339e2"
-defaults = {"lanaguage": "en-US", "include_adult": "false", "include_video": "false"}
+defaults = {"lanaguage": "en-US", "include_adult": "true", "include_video": "false"}
 
 '''
 Basic GET request that can also save movie data locally for faster retrieval.
-By default, only English, non-adult, non-inclusive video movies are included in the request.
+By default, only English, adult, non-inclusive video movies are included in the request.
 It is ASSUMED that all requests will be from page 1. Failure to do so may lead to duplicate and/or missing entries.
 
 @param attributes: the dictionary of attributes that we want to filter the request by.
@@ -39,7 +39,10 @@ def getMovies(attributes = {}, save = False, default = defaults):
 
     if totalPages != 1:
         for i in range(2, totalPages + 1):
+            print(i)
             url += "&page=" + str(i)
+            if (i % 25 == 0):
+                time.sleep(10)
             data = requests.get(url)
 
             if data.status_code != 200:

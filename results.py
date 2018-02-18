@@ -1,15 +1,14 @@
 import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 import re
 import wikipedia
 from collections import Counter
 from MovieDBRequests import *
 
+
 def remove_duplicates(tweets):
     return list(set(tweets))
 
-
+tmdb = getMovies({'include_adult':True, 'primary_release_year':2017, 'vote_average.gte':6.0}, save=True)
 def get_people_names(words):
     # input: array of strings
 	names = nltk.corpus.names
@@ -34,15 +33,18 @@ def get_people_names(words):
 	
 def get_movie_names_simple(tweet):
 	capitalized_words = []
-	movie = []
-
+	movie_words = []
+	tmdb = json.load(open('./files/movies.json'))
 	capitalized_words = set(re.findall('([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)', tweet))
 	for words in capitalized_words:
         # need to ignore prepositions, "the", people names
-		
-		movie.append(words)
-	return movie
+		movie_words.append(words)
+	print (' '.join(movie_words))
+	if (' '.join(movie_words) in tmdb.keys()):
+		return ' '.join(movie_words)
 
+print (get_movie_names_simple("Glad I watched Get Out"))		
+		
 def get_proper_nouns(tweet):
 	result = get_people_names(tweet)
 	
