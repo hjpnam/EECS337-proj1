@@ -64,13 +64,23 @@ def get_winners(tweets):
 		tweet2 = [word.lower() for word in tweet]
 		for i in range(len(award_tokenized)):
 			if len(set(tweet2).intersection(award_tokenized[i])) == len(award_tokenized[i]):
-				proper_nouns = get_people_names(tweet)
-				if "present" in ' '.join(tweet2):
-					for noun in proper_nouns:
-						presenters.increment(awards[i],noun)
+				if ('actor' in award_tokenized[i] or 'actress' in award_tokenized[i] or 'director' in award_tokenized[i] or 'score' in award_tokenized[i] or 'screenplay' in award_tokenized[i] or 'cecil' in award_tokenized[i]):
+					proper_nouns = get_people_names(tweet)
+					if "present" in ' '.join(tweet2):
+						for noun in proper_nouns:
+							presenters.increment(awards[i],noun)
+					else:
+						for noun in proper_nouns:
+							winners.increment(awards[i], noun)
 				else:
-					for noun in proper_nouns:
-						winners.increment(awards[i], noun)
+					proper_nouns = get_movie_names_simple(tweet)
+		
+					if "present" in ' '.join(tweet2):
+						for noun in proper_nouns:
+							presenters.increment(awards[i], noun)
+					else:
+						for noun in proper_nouns:
+							winners.increment(awards[i], noun)
 
 	for award in awards:
 		#presenters_result[award] = presenters.get_max_actor(award)[0]
