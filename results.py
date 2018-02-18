@@ -2,13 +2,11 @@ import nltk
 import re
 import wikipedia
 from collections import Counter
-from MovieDBRequests import *
-
+import json
 
 def remove_duplicates(tweets):
     return list(set(tweets))
 
-#tmdb = getMovies({'include_adult':True, 'primary_release_year':2017, 'vote_average.gte':6.0}, save=True)
 def get_people_names(words):
     # input: array of strings
 	# names = nltk.corpus.names
@@ -31,7 +29,7 @@ def get_people_names(words):
 	# 			tweet_names.append(first_name)
 	# return tweet_names
 
-    stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man']
+    stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'Tube']
     joined = ' '.join(words)
     proper = re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)', joined)
     names = []
@@ -47,13 +45,11 @@ def get_people_names(words):
 
         result = wikipedia.search(local)
         if len(result) != 0 and local in result[0]:
-            print('adding 1')
             names.append(local)
             continue
 
         result = wikipedia.search(local + " (actor)")
         if len(result) != 0 and local + " (actor)" in result[0]:
-            print('adding 2')
             names.append(local)
             continue
 
@@ -73,8 +69,12 @@ def get_movie_names_simple(tweet):
     for words in capitalized_words:
         # need to ignore prepositions, "the", people names
         movie_words.append(words)
-    if (' '.join(movie_words) in tmdb.keys()):
-        movie.append(' '.join(movie_words))
+    #if (' '.join(movie_words) in tmdb.keys()):
+    #movie.append(' '.join(movie_words))
+
+    for key in tmdb.keys():
+        if key in ' '.join(movie_words):
+            movie.append(key)
     return movie
 
 def get_hosts(tweets):

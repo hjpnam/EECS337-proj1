@@ -4,6 +4,7 @@ from nltk.tokenize import word_tokenize
 import json
 import re
 from AwardCounter import *
+from MovieDBRequests import *
 from results import *
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
@@ -23,7 +24,7 @@ def process_tweet(tweet):
 	#tweet = re.sub(r"#\S+", "", tweet)
 	#tweet = re.sub(r"@\S+", "", tweet)
 	#stop_words = set(stopwords.words('english')) | set(["GoldenGlobes", 'goldenglobes', 'Goldenglobes', 'Golden','golden','globes','Globes', 'RT', 'I', "Oscars", "oscars","!",",",".","?",';',"#","@"]) - set(['in','In','Out','out','by','By','for','For','From','from','over','Over','under','Under'])
-	stop_words = ['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment', 'goldenglobes', 'GoldenGlobes', '@GoldenGlobes']
+	stop_words = ['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment', 'goldenglobes', 'GoldenGlobes', '@GoldenGlobes', 'Goldenglobes', '@YouTube', '@TMZ', '@GMA', 'Golden Globes']
 
 	for stop in stop_words:
 		if stop in tweet:
@@ -48,6 +49,9 @@ def get_winners(tweets):
 		winners.add_award(awards[i])
 
 	for tweet in tweets:
+		if 'RT' in tweet['text'][0:5]:
+			continue
+		tweet = process_tweet(tweet['text'])
 		tweet2 = [word.lower() for word in tweet]
 		for i in range(len(award_tokenized)):
 			if len(set(tweet2).intersection(award_tokenized[i])) == len(award_tokenized[i]):
@@ -98,18 +102,9 @@ def get_awards():
 
 	return short_awards
 
-
 def main():
 	data = json.load(open('gg2018.json'))
-	tweets = []
-	print (len(data))
-	for tweet in data:
-		if 'RT' not in tweet['text'][0:5]:
-			tweets.append(process_tweet(tweet['text']))
-	print(len(tweets))
-
-	#award_tweets = extract_award_tweets(tweets)
-	print get_winners(tweets)
-	#print(award_tweets)
+	getMovies({'primary_release_year': '2017', 'vote_average.gte': '6.5'}, True)
+	print get_winners(data)
 
 main()
