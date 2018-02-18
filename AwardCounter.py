@@ -17,21 +17,7 @@ class AwardCounter:
             self.awards[award][actor] = 0
         self.awards[award][actor] += 1
         return True
-
-	# def increment(self, award, actor):
-	# 	if award not in self.awards:
-	# 		self.awards[award] = {}
-	# 	if actor not in self.awards[award]:
-	# 		self.awards[award][actor] = 0
-	# 	self.awards[award][actor] += 1
-	# 	return True
-    #
-    # def increment_award_actor(self, award, actor):
-    #     if award not in self.awards or actor not in self.awards[award]:
-    #         return False
-    #     self.awards[award][actor] += 1
-    #     return True
-
+        
     def get_actors_for_award(self, award):
         if award not in self.awards:
             return False

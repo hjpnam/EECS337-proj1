@@ -4,10 +4,7 @@ import wikipedia
 from collections import Counter
 import json
 
-stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'YouTube', 'GMA', 'TMZ', 'GDIGM', 'GG', 'GoldenGlobes', 'goldenglobes']
-
-def remove_duplicates(tweets):
-    return list(set(tweets))
+stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'YouTube', 'GMA', 'TMZ', 'GDIGM', 'GG', 'GoldenGlobes', 'goldenglobes', 'Goldenglobes', 'ABC', 'GoldenGlobesTNT', 'PerezHilton', 'TwoPointConv', 'AwardsCircuit']
 
 def get_people_names(words):
 
@@ -43,7 +40,7 @@ def get_movie_names_simple(tweet):
     tmdb = json.load(open('./files/movies.json'))
     movie = []
     if '\'' in tweet:
-        capitalized_words = re.findall(r'([A-Za-z]+\s[A-Za-z]+\'[a-z]\s[A-Za-z]+)', ' '.join(tweet))
+        capitalized_words = re.findall(r'([A-Za-z]+\s*[A-Za-z|\'?]+[a-z]\s[A-Za-z]+)', ' '.join(tweet))
     else:
         capitalized_words = re.findall(r'([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+[a-z]+)*(?:\s+[A-Z][a-z]+)*)', ' '.join(tweet))
 
@@ -75,7 +72,6 @@ def get_hosts(tweets):
 
     hosts = cnt.most_common(1)
     return hosts[0][0]
-
 
 def get_handle_names(tweet):
     handles = []

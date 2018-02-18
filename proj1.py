@@ -7,15 +7,15 @@ from AwardCounter import *
 from MovieDBRequests import *
 from results import *
 
-
 def tokenize_awards():
 	stop_words = set(['Motion', 'motion', 'performance','Performance', 'by','By','an','An', 'a', 'role','Role','A','original','Original','series','Series','for','For',u'\u2013','in','In','Or','or','Award','award'])
 	awards = get_awards()
 	tokenized_awards = []
 	for i in range(len(awards)):
 		tk = word_tokenize(awards[i].lower())
-		tk[tk.index('television')] = 'tv'
-				
+		if 'television' in tk:
+			tk[tk.index('television')] = 'tv'
+
 		tokenized_awards.append(set(tk) - stop_words)
 	return tokenized_awards
 
