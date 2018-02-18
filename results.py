@@ -4,32 +4,13 @@ import wikipedia
 from collections import Counter
 import json
 
+stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'YouTube']
+
 def remove_duplicates(tweets):
     return list(set(tweets))
 
 def get_people_names(words):
-    # input: array of strings
-	# names = nltk.corpus.names
-	# all_names = names.words('male.txt') + names.words('female.txt')
-	# all_names = [name.lower() for name in all_names]
-    #
-	# tweet_names= []
-    #
-	# for i in range(0, len(words)):
-	# 	if(words[i] == '@'):
-	# 		tweet_names.append(words[i+1])
-	# 	if words[i].lower() in all_names:
-	# 		first_name = words[i]
-	# 		if i+1 < len(words):
-	# 			last_name = words[i+1]
-	# 			full_name = first_name.title() + " " + last_name.title()
-	# 			if full_name in wikipedia.search(full_name) or full_name + " (actor)" in wikipedia.search(full_name):
-	# 				tweet_names.append(full_name)
-	# 		else:
-	# 			tweet_names.append(first_name)
-	# return tweet_names
-
-    stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'Tube']
+    
     joined = ' '.join(words)
     proper = re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)', joined)
     names = []
@@ -97,16 +78,18 @@ def get_hosts(tweets):
 
 
 def get_handle_names(tweet):
-	handles = []
-	handle_names = []
-	for i in range(0,len(tweet)):
-		if tweet[i] == "@":
-			if i+1 < len(tweet):
-				handle = tweet[i+1]
-				handles.append(handle)
+    handles = []
+    handle_names = []
+    for i in range(0,len(tweet)):
+        if tweet[i] == "@":
+            if tweet[i+1] not in stopwords:
+                if i+1 < len(tweet):
+                    handle = tweet[i+1]
+                    handles.append(handle)
 
-	for handle in handles:
-		if handle[0].isupper():
-			name = (''.join(' ' + x if 'A' <= x <= 'Z' else x for x in handle)).strip()
-			handle_names.append(name)
-	return handle_names
+    for handle in handles:
+        if handle[0].isupper():
+            name = (''.join(' ' + x if 'A' <= x <= 'Z' else x for x in handle)).strip()
+            name = name.replace("_", "")
+            handle_names.append(name)
+    return handle_names

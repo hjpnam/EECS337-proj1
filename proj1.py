@@ -21,7 +21,7 @@ def tokenize_awards():
 
 def process_tweet(tweet):
 	tweet = re.sub(r"http\S+", "", tweet)
-	#tweet = re.sub(r"#\S+", "", tweet)
+	tweet = re.sub(r"#\S+", "", tweet)
 	#tweet = re.sub(r"@\S+", "", tweet)
 	#stop_words = set(stopwords.words('english')) | set(["GoldenGlobes", 'goldenglobes', 'Goldenglobes', 'Golden','golden','globes','Globes', 'RT', 'I', "Oscars", "oscars","!",",",".","?",';',"#","@"]) - set(['in','In','Out','out','by','By','for','For','From','from','over','Over','under','Under'])
 	stop_words = ['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment', 'goldenglobes', 'GoldenGlobes', '@GoldenGlobes', 'Goldenglobes', '@YouTube', '@TMZ', '@GMA', 'Golden Globes']
@@ -104,7 +104,7 @@ def get_awards():
 
 def main():
 	data = json.load(open('gg2018.json'))
-	getMovies({'primary_release_year': '2017', 'vote_average.gte': '6.5'}, True)
+	#getMovies({'primary_release_year': '2017', 'vote_average.gte': '6.5'}, True)
 	print get_winners(data)
 
 main()
