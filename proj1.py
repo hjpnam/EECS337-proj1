@@ -23,7 +23,7 @@ def process_tweet(tweet):
 	#tweet = re.sub(r"#\S+", "", tweet)
 	#tweet = re.sub(r"@\S+", "", tweet)
 	#stop_words = set(stopwords.words('english')) | set(["GoldenGlobes", 'goldenglobes', 'Goldenglobes', 'Golden','golden','globes','Globes', 'RT', 'I', "Oscars", "oscars","!",",",".","?",';',"#","@"]) - set(['in','In','Out','out','by','By','for','For','From','from','over','Over','under','Under'])
-	stop_words = ['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment', 'goldenglobes']
+	stop_words = ['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment', 'goldenglobes', 'GoldenGlobes', '@GoldenGlobes']
 
 	for stop in stop_words:
 		if stop in tweet:
@@ -65,6 +65,7 @@ def get_winners(tweets):
 		for i in range(len(award_tokenized)):
 			if len(set(tweet2).intersection(award_tokenized[i])) == len(award_tokenized[i]):
 				proper_nouns = get_people_names(tweet)
+				proper_nouns.extend(get_handle_names(tweet))
 				if "present" in ' '.join(tweet2):
 					for noun in proper_nouns:
 						presenters.increment(awards[i],noun)
@@ -101,6 +102,40 @@ def get_awards():
 
 	return short_awards
 
+# def get_handle_names(tweets):
+# 	# tweets are tokenized
+# 	handles = []
+# 	handle_names = []
+# 	for tweet in tweets:
+# 		for i in range(0,len(tweet)):
+# 			if tweet[i] == "@":
+# 				if i+1 < len(tweet):
+# 					handle = tweet[i+1]
+# 					handles.append(handle)
+#
+# 	for handle in handles:
+# 		if handle[0].isupper():
+# 			name = (''.join(' ' + x if 'A' <= x <= 'Z' else x for x in handle)).strip()
+# 			handle_names.append(name)
+# 	print "number of @", len(handle_names)
+# 	print handle_names
+# 	return handle_names
+
+def get_handle_names(tweet):
+	handles = []
+	handle_names = []
+	for i in range(0,len(tweet)):
+		if tweet[i] == "@":
+			if i+1 < len(tweet):
+				handle = tweet[i+1]
+				handles.append(handle)
+
+	for handle in handles:
+		if handle[0].isupper():
+			name = (''.join(' ' + x if 'A' <= x <= 'Z' else x for x in handle)).strip()
+			handle_names.append(name)
+	return handle_names
+
 def main():
 	data = json.load(open('gg2018.json'))
 	tweets = []
@@ -108,24 +143,6 @@ def main():
 	for tweet in data:
 		if 'RT' not in tweet['text'][0:5]:
 			tweets.append(process_tweet(tweet['text']))
-	print(len(tweets))
-
-	SHORT = get_awards()
-	awards_covered = []
-	num_tweet = 0
-	# for tweet in tweets:
-	# 	tweet2 = ' '.join(tweet)
-	# 	for award in SHORT:
-	# 		if award.lower() in tweet2.lower():
-	# 			num_tweet+=1
-	# 			if award not in awards_covered:
-	# 				awards_covered.append(award)
-	#
-	# for award in awards_covered:
-	# 	print "award is found", award
-
-	# print "num", num_tweet
-	# print "awards counted", len(awards_covered)
 
 	#award_tweets = extract_award_tweets(tweets)
 	print get_winners(tweets)
