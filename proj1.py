@@ -58,7 +58,8 @@ def get_winners(tweets):
 				if ('actor' in award_tokenized[i] or 'actress' in award_tokenized[i] or 'director' in award_tokenized[i] or 'score' in award_tokenized[i] or 'screenplay' in award_tokenized[i] or 'cecil' in award_tokenized[i]):
 					proper_nouns = get_people_names(tweet)
 					proper_nouns.extend(get_handle_names(tweet))
-					if "present" in ' '.join(tweet2):
+					joined = ' '.join(tweet2)
+					if "present" in joined or "announc" in joined:
 						for noun in proper_nouns:
 							presenters.increment(awards[i],noun)
 					else:
@@ -66,7 +67,8 @@ def get_winners(tweets):
 							winners.increment(awards[i], noun)
 				else:
 					proper_nouns = get_movie_names_simple(tweet)
-					if "present" in ' '.join(tweet2):
+					joined = ' '.join(tweet2)
+					if "present" in joined or "announc" in joined:
 						for noun in proper_nouns:
 							presenters.increment(awards[i], noun)
 					else:

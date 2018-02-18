@@ -4,13 +4,13 @@ import wikipedia
 from collections import Counter
 import json
 
-stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'YouTube']
+stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'YouTube', 'GMA', 'TMZ', 'GDIGM', 'GG', 'GoldenGlobes', 'goldenglobes']
 
 def remove_duplicates(tweets):
     return list(set(tweets))
 
 def get_people_names(words):
-    
+
     joined = ' '.join(words)
     proper = re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)', joined)
     names = []
