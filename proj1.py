@@ -74,7 +74,6 @@ def get_winners(tweets):
 							winners.increment(awards[i], noun)
 				else:
 					proper_nouns = get_movie_names_simple(tweet)
-		
 					if "present" in ' '.join(tweet2):
 						for noun in proper_nouns:
 							presenters.increment(awards[i], noun)
@@ -119,23 +118,6 @@ def main():
 		if 'RT' not in tweet['text'][0:5]:
 			tweets.append(process_tweet(tweet['text']))
 	print(len(tweets))
-
-	SHORT = get_awards()
-	awards_covered = []
-	num_tweet = 0
-	# for tweet in tweets:
-	# 	tweet2 = ' '.join(tweet)
-	# 	for award in SHORT:
-	# 		if award.lower() in tweet2.lower():
-	# 			num_tweet+=1
-	# 			if award not in awards_covered:
-	# 				awards_covered.append(award)
-	#
-	# for award in awards_covered:
-	# 	print "award is found", award
-
-	# print "num", num_tweet
-	# print "awards counted", len(awards_covered)
 
 	#award_tweets = extract_award_tweets(tweets)
 	print get_winners(tweets)
