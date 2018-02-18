@@ -37,19 +37,21 @@ class AwardCounter:
             return False
         return self.awards[award]
 
-    def get_max_actor(self, award):
+    def get_max_actor(self, award):				
         if award not in self.awards:
             return False
+        if (len(self.awards[award].values())==0):
+            return ['empty']
         max_value = max(self.awards[award].values())
         return [k for k,v in self.awards[award].items() if v == max_value]
 
-	def get_max_n_actors(self, award, n = 5):
-		if award not in self.awards:
-			return False
-		awards_copy = self.awards.copy()
-		award_keys = sorted(awards_copy, key = awards_copy.get, reverse = True)
-		
-		return award_keys[0:n]
-		
+    def get_max_n_actors(self, award, n = 5):
+        if award not in self.awards:
+            return False
+        awards_copy = self.awards[award].copy()
+        award_keys = sorted(awards_copy, key = awards_copy.get, reverse = True)
+        
+        return award_keys[0:n]
+
     def get_all(self):
         return self.awards
