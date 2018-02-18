@@ -94,3 +94,19 @@ def get_hosts(tweets):
 
     hosts = cnt.most_common(1)
     return hosts[0][0]
+
+
+def get_handle_names(tweet):
+	handles = []
+	handle_names = []
+	for i in range(0,len(tweet)):
+		if tweet[i] == "@":
+			if i+1 < len(tweet):
+				handle = tweet[i+1]
+				handles.append(handle)
+
+	for handle in handles:
+		if handle[0].isupper():
+			name = (''.join(' ' + x if 'A' <= x <= 'Z' else x for x in handle)).strip()
+			handle_names.append(name)
+	return handle_names

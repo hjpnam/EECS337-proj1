@@ -31,21 +31,8 @@ def process_tweet(tweet):
 
 	word_tokens = word_tokenize(tweet)
 
-
 	return word_tokens
-'''
-def extract_award_tweets(tweets):
-	helper_words = set(['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini'])
 
-	award_tweets = []
-
-	for tweet in tweets:
-		tweet = process_tweet(tweet)
-		if (len(set(tweet)&(helper_words)) >= 2):
-			award_tweets.append(tweet)
-
-	return award_tweets
-'''
 def get_winners(tweets):
 	presenters = AwardCounter()
 	winners = AwardCounter()
@@ -111,39 +98,6 @@ def get_awards():
 
 	return short_awards
 
-# def get_handle_names(tweets):
-# 	# tweets are tokenized
-# 	handles = []
-# 	handle_names = []
-# 	for tweet in tweets:
-# 		for i in range(0,len(tweet)):
-# 			if tweet[i] == "@":
-# 				if i+1 < len(tweet):
-# 					handle = tweet[i+1]
-# 					handles.append(handle)
-#
-# 	for handle in handles:
-# 		if handle[0].isupper():
-# 			name = (''.join(' ' + x if 'A' <= x <= 'Z' else x for x in handle)).strip()
-# 			handle_names.append(name)
-# 	print "number of @", len(handle_names)
-# 	print handle_names
-# 	return handle_names
-
-def get_handle_names(tweet):
-	handles = []
-	handle_names = []
-	for i in range(0,len(tweet)):
-		if tweet[i] == "@":
-			if i+1 < len(tweet):
-				handle = tweet[i+1]
-				handles.append(handle)
-
-	for handle in handles:
-		if handle[0].isupper():
-			name = (''.join(' ' + x if 'A' <= x <= 'Z' else x for x in handle)).strip()
-			handle_names.append(name)
-	return handle_names
 
 def main():
 	data = json.load(open('gg2018.json'))
@@ -152,59 +106,10 @@ def main():
 	for tweet in data:
 		if 'RT' not in tweet['text'][0:5]:
 			tweets.append(process_tweet(tweet['text']))
-<<<<<<< HEAD
-=======
 	print(len(tweets))
->>>>>>> 8fb7e88ce425173f6faedf98449da5d835b4d871
 
 	#award_tweets = extract_award_tweets(tweets)
 	print get_winners(tweets)
 	#print(award_tweets)
 
 main()
-'''
-def extract_awards():
-	helper_words = ['Drama', 'drama', 'Performance', 'performance', 'Best', 'best', 'Original', 'original', 'Screenplay', 'screenplay', 'Director', 'director', 'Role', 'role', 'Score', 'score', 'Song', 'song', 'actor', 'Actor', 'Actress', 'actress', 'Comedy','comedy', 'Musical', 'musical', 'Feature', 'feature', 'supporting','Supporting', 'Foreign', 'foreign', 'animated','Animated', 'Picture', 'picture', 'Motion', 'motion', 'Language', 'language', 'Director', 'director', 'Mini-series', 'mini-series', 'mini','Mini','limited','Limited','Series','series','Cecil B. DeMille Award','cecil b. demille Award', 'Cecil B. DeMille']
-
-	prepositions = ['-', 'Or','or','By','by','An','an','In','in','A','a', 'any', 'Any', 'for','For','made','Made',',']
-
-	award_tweets = extract_award_tweets()
-	awards = []
-	for tweet in award_tweets:
-		i = len(tweet) - 1
-		for helper in helper_words:
-			if helper in tweet:
-				j = tweet.index(helper)
-				if j < i:
-					i = j
-		arr = []
-
-		for word in tweet:
-			if (word in helper_words or word in prepositions) and tweet.index(word) >= i:
-				arr.append(word.lower())
-			else:
-				continue
-
-		if((arr[0] == 'best' or arr[0] == 'Best') and arr[-1] in helper_words):
-			awardStr = ' '.join(arr)
-			if awardStr not in awards:
-				awards.append(awardStr)
-
-	remove = []
-	for i in range(0, len(awards)-1):
-		for j in range(i, len(awards)):
-			award1 = awards[i]
-			award2 = awards[j]
-
-			if(SequenceMatcher(None,award1,award2).ratio() > 0.3):
-				if not('actor' in award1 and 'actress' in award2 or 'actress' in award1 and 'actor' in award2):
-					remove.append(award1)
-
-	remove = set(remove)
-
-	for r in remove:
-		if r in awards:
-			awards.remove(r)
-
-	return awards
-'''
