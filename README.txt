@@ -23,5 +23,5 @@ Options you may set at the top of `proj1.py`:
 GG_File => the relative path to the Golden Globes JSON file.
 TMDB_QUERY => set to True if you would like to update The Movie Database (TMDB) JSON local file. Sends multiple API Requests.
 MOVIE_YEAR => the year you would like to retrieve movies/TV shows from TMDB (TMDB_QUERY must be set to True).
-ENABLE_EXTRA_QUERIES => set to True if you would like to get results for most popular and other miscellaneous categories.
+ENABLE_EXTRA_QUERIES => set to True if you would like to get results for most popular and other miscelleous categories.
 ```
