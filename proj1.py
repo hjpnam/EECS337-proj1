@@ -135,14 +135,21 @@ def get_awards():
 def get_extra(data):
     most_popular = AwardCounter()
     most_popular.add_award("Most Popular")
+    designerDict = {}
+    designers = ["Christian Siriano", "Zuhair Murad", "Prabal Gurung", "Marc Jacobs", "Mario Dice", "Louis Vuitton", "Gucci", "Romona Keveza", "Alberta Ferretti", "Oscar de la Renta", "Armani Prive", "Tadashi Shoji", "Atelier Versace", "Brandon Maxwell", "Christian Dior", "Miu Miu", "Genny", "Zac Posen", "Givenchy"]
     for tweet in data:
+        if "RT" in tweet['text'][0:5]:
+            continue
         tweet = process_tweet(tweet['text'])
         proper_nouns = get_people_names(tweet)
         #proper_nouns.extend(get_handle_names(tweet))
         for noun in proper_nouns:
             most_popular.increment("Most Popular", noun)
+        for designer in designers:
+            if designer in tweet:
+                designerDict[designer] = proper_nouns
 
-    return most_popular.get_max_actor('Most Popular')[0]
+    return most_popular.get_max_actor('Most Popular')[0], designerDict
 
 def main():
 
@@ -150,9 +157,9 @@ def main():
 	data = json.load(open(GG_FILE))
 	print('Number of tweets: ' + str(len(data)))
 
-	if TMDB_QUERY:
-		print('Getting movies from TMDB for: ' + MOVIE_YEAR)
-		getMovies({'primary_release_year': MOVIE_YEAR, 'vote_average.gte': '6.5'}, True)
+	# if TMDB_QUERY:
+	# 	print('Getting movies from TMDB for: ' + MOVIE_YEAR)
+	# 	getMovies({'primary_release_year': MOVIE_YEAR, 'vote_average.gte': '6.5'}, True)
 
 	# print('Parsing tweets for relevant information...(this might take awhile)')
 	# results = get_winners(data)
