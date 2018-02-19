@@ -20,7 +20,7 @@ TMDB_QUERY = False
 MOVIE_YEAR = '2017'
 
 # Set to True if you would like to get results for most popular and other miscelleous categories.
-ENABLE_EXTRA_QUERIES = True
+ENABLE_EXTRA_QUERIES = False
 
 ####################################################################################
 
@@ -135,21 +135,24 @@ def get_awards():
 def get_extra(data):
     most_popular = AwardCounter()
     most_popular.add_award("Most Popular")
+
     designerDict = {}
     designers = ["Christian Siriano", "Zuhair Murad", "Prabal Gurung", "Marc Jacobs", "Mario Dice", "Louis Vuitton", "Gucci", "Romona Keveza", "Alberta Ferretti", "Oscar de la Renta", "Armani Prive", "Tadashi Shoji", "Atelier Versace", "Brandon Maxwell", "Christian Dior", "Miu Miu", "Genny", "Zac Posen", "Givenchy"]
+
+    for designer in designers:
+        designerDict[designer] = set()
     for tweet in data:
         if "RT" in tweet['text'][0:5]:
             continue
         tweet = process_tweet(tweet['text'])
-        proper_nouns = get_people_names(tweet)
-        #proper_nouns.extend(get_handle_names(tweet))
-        for noun in proper_nouns:
-            most_popular.increment("Most Popular", noun)
         for designer in designers:
-            if designer in tweet:
-                designerDict[designer] = proper_nouns
-
-    return most_popular.get_max_actor('Most Popular')[0], designerDict
+            tweet2 = ' '.join(tweet)
+            if designer in tweet2:
+                proper_nouns = get_people_names(tweet)
+                for noun in proper_nouns:
+                    if designer != noun:
+                        designerDict[designer].add(noun)
+    return designerDict
 
 def main():
 
@@ -157,28 +160,35 @@ def main():
 	data = json.load(open(GG_FILE))
 	print('Number of tweets: ' + str(len(data)))
 
-	# if TMDB_QUERY:
-	# 	print('Getting movies from TMDB for: ' + MOVIE_YEAR)
-	# 	getMovies({'primary_release_year': MOVIE_YEAR, 'vote_average.gte': '6.5'}, True)
+	if TMDB_QUERY:
+		print('Getting movies from TMDB for: ' + MOVIE_YEAR)
+		getMovies({'primary_release_year': MOVIE_YEAR, 'vote_average.gte': '6.5'}, True)
 
-	# print('Parsing tweets for relevant information...(this might take awhile)')
-	# results = get_winners(data)
-	# awards = get_awards()
-	#
-	# print('\n')
-	# print("Host is: " + results[3])
-	# print("\n")
-	#
-	# for award in awards:
-	# 	print('Award: ' + award)
-	# 	print('Presented By: ' + results[0][award])
-	# 	print('Nominees: ' + ', '.join(results[2][award]))
-	# 	print('Winner: ' + results[1][award])
-	# 	print('\n')
+	print('Parsing tweets for relevant information...(this might take awhile)')
+	results = get_winners(data)
+	awards = get_awards()
+
+	print('\n')
+	print("Host is: " + results[3])
+	print("\n")
+
+	for award in awards:
+		print('Award: ' + award)
+		print('Presented By: ' + results[0][award])
+		print('Nominees: ' + ', '.join(results[2][award]))
+		print('Winner: ' + results[1][award])
+		print('\n')
 
 	if ENABLE_EXTRA_QUERIES:
-		print('Getting extra categories...(this will take a long time)')
-		print(get_extra(data))
+		print('Getting extra categories...(this will not take that long)')
+		designerDict = get_extra(data)
+		for key in designerDict.keys():
+			ourList = list(designerDict[key])
+			if ourList == []:
+				ourList = ["no one that we could find"]
+			ourList = ', '.join(ourList)
+			print (key + " designed the dress for " + ourList)
+		# print(get_extra(data))
 
 '''
 CALL THE MAIN FUNCTION TO RUN THE PROGRAM.
