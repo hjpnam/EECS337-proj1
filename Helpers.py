@@ -1,10 +1,9 @@
-import nltk
 import re
 import wikipedia
 from collections import Counter
 import json
 
-stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'YouTube', 'GMA', 'TMZ', 'GDIGM', 'GG', 'GoldenGlobes', 'goldenglobes', 'Goldenglobes', 'ABC', 'GoldenGlobesTNT', 'PerezHilton', 'TwoPointConv', 'AwardsCircuit']
+stopwords = ['Award', 'Golden', 'Globes', 'Television', 'Series', 'Motion', 'Picture', 'Actress', 'Actor', 'The', 'Best', 'In', 'And', 'Of', 'Drama', 'Role', 'Supporting', 'Speech', 'New', 'San', 'Their', 'Billboards', 'Blog', 'Amen', 'Watch', 'Gossip', 'Woman', 'Man', 'YouTube', 'GMA', 'TMZ', 'GDIGM', 'GG', 'GoldenGlobes', 'goldenglobes', 'Goldenglobes', 'ABC', 'GoldenGlobesTNT', 'PerezHilton', 'TwoPointConv', 'AwardsCircuit', 'BayArea', 'PlanetPat5', 'THR']
 
 def get_people_names(words):
 
@@ -14,7 +13,7 @@ def get_people_names(words):
 
     for i in range(0, len(proper)):
         local = proper[i]
-        if 'Mc' in proper[i]:
+        if 'Mc' in proper[i] and i < len(proper) - 1:
             local = local + proper[i+1]
             i += 1
         splitted = local.split(' ')
@@ -45,10 +44,7 @@ def get_movie_names_simple(tweet):
         capitalized_words = re.findall(r'([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+[a-z]+)*(?:\s+[A-Z][a-z]+)*)', ' '.join(tweet))
 
     for words in capitalized_words:
-        # need to ignore prepositions, "the", people names
         movie_words.append(words)
-    #if (' '.join(movie_words) in tmdb.keys()):
-    #movie.append(' '.join(movie_words))
 
     for key in tmdb.keys():
         if key in ' '.join(movie_words):

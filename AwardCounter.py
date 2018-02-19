@@ -17,7 +17,7 @@ class AwardCounter:
             self.awards[award][actor] = 0
         self.awards[award][actor] += 1
         return True
-        
+
     def get_actors_for_award(self, award):
         if award not in self.awards:
             return False
@@ -27,7 +27,7 @@ class AwardCounter:
         if award not in self.awards:
             return False
         if (len(self.awards[award].values())==0):
-            return ['None']
+            return ['Unknown']
         max_value = max(self.awards[award].values())
         return [k for k,v in self.awards[award].items() if v == max_value]
 

@@ -33,7 +33,7 @@ def getMovies(attributes = {}, save = False, default = defaults):
 
     content = json.loads(data.content.decode('utf-8'))
     totalPages = content["total_pages"]
-    print(totalPages)
+    print("Total number of pages to request: " + str(totalPages))
 
     movies = {}
 
@@ -44,9 +44,9 @@ def getMovies(attributes = {}, save = False, default = defaults):
         for i in range(2, totalPages + 1):
             ind = url.rfind('=');
             url = url[0:ind+1] + str(i)
-            print(url)
+            print("Getting from: " + url)
             if (i % 25 == 0):
-                time.sleep(5)
+                time.sleep(3)
             data = requests.get(url)
 
             if data.status_code != 200:

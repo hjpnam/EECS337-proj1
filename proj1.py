@@ -1,14 +1,31 @@
 import nltk
-from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import json
 import re
+import wikipedia
 from AwardCounter import *
 from MovieDBRequests import *
-from results import *
+from Helpers import *
+
+'''
+GLOBAL CONTROL VARIABLES TO SET THE STATE OF THE PROGRAM.
+'''
+# The relative path to the Golden Globes JSON file.
+GG_FILE = './gg2018.json'
+
+# Set to True if you would like to update The Movie Database (TMDB) JSON local file. Sends multiple API Requests.
+TMDB_QUERY = False
+
+# The year you would like to retrieve movies/TV shows from TMDB (TMDB_QUERY must be set to True).
+MOVIE_YEAR = '2017'
+
+# Set to True if you would like to get results for most popular and other miscelleous categories.
+ENABLE_EXTRA_QUERIES = True
+
+####################################################################################
 
 def tokenize_awards():
-	stop_words = set(['Motion', 'motion', 'performance','Performance', 'by','By','an','An', 'a', 'role','Role','A','original','Original','series','Series','for','For',u'\u2013','in','In','Or','or','Award','award'])
+	stop_words = set(['Motion', 'motion', 'performance','Performance', 'series', 'Series', 'by','By','an','An', 'a', 'role','Role','A','original','Original','for','For',u'\u2013','in','In','Or','or','Award','award', ','])
 	awards = get_awards()
 	tokenized_awards = []
 	for i in range(len(awards)):
@@ -22,8 +39,6 @@ def tokenize_awards():
 def process_tweet(tweet):
 	tweet = re.sub(r"http\S+", "", tweet)
 	tweet = re.sub(r"#\S+", "", tweet)
-	#tweet = re.sub(r"@\S+", "", tweet)
-	#stop_words = set(stopwords.words('english')) | set(["GoldenGlobes", 'goldenglobes', 'Goldenglobes', 'Golden','golden','globes','Globes', 'RT', 'I', "Oscars", "oscars","!",",",".","?",';',"#","@"]) - set(['in','In','Out','out','by','By','for','For','From','from','over','Over','under','Under'])
 	stop_words = ['@VanityFair', '@goldenglobes', '@voguemagazine', '@BuzzFeed', '@BuzzFeedNews','@THR','@chicagotribune','@people','@EW','@e_entertainment', 'goldenglobes', 'GoldenGlobes', '@GoldenGlobes', 'Goldenglobes', '@YouTube', '@TMZ', '@GMA', 'Golden Globes']
 
 	for stop in stop_words:
@@ -90,8 +105,8 @@ def get_winners(tweets):
 	host = (cnt.most_common(1))[0][0]
 
 	for award in awards:
-		#presenters_result[award] = presenters.get_max_actor(award)[0]
-		#winners_result[award] = winners.get_max_actor(award)[0]
+		presenters_result[award] = presenters.get_max_actor(award)[0]
+		winners_result[award] = winners.get_max_actor(award)[0]
 		nominees_result[award] = winners.get_max_n_actors(award, 5)
 
 	return presenters_result, winners_result, nominees_result, host
@@ -117,9 +132,48 @@ def get_awards():
 
 	return short_awards
 
-def main():
-	data = json.load(open('gg2018.json'))
-	#getMovies({'primary_release_year': '2017', 'vote_average.gte': '6.5'}, True)
-	print get_winners(data)
+def get_extra(data):
+    most_popular = AwardCounter()
+    most_popular.add_award("Most Popular")
+    for tweet in data:
+        tweet = process_tweet(tweet['text'])
+        proper_nouns = get_people_names(tweet)
+        #proper_nouns.extend(get_handle_names(tweet))
+        for noun in proper_nouns:
+            most_popular.increment("Most Popular", noun)
 
+    return most_popular.get_max_actor('Most Popular')[0]
+
+def main():
+
+	print('Loading file...')
+	data = json.load(open(GG_FILE))
+	print('Number of tweets: ' + str(len(data)))
+
+	if TMDB_QUERY:
+		print('Getting movies from TMDB for: ' + MOVIE_YEAR)
+		getMovies({'primary_release_year': MOVIE_YEAR, 'vote_average.gte': '6.5'}, True)
+
+	# print('Parsing tweets for relevant information...(this might take awhile)')
+	# results = get_winners(data)
+	# awards = get_awards()
+	#
+	# print('\n')
+	# print("Host is: " + results[3])
+	# print("\n")
+	#
+	# for award in awards:
+	# 	print('Award: ' + award)
+	# 	print('Presented By: ' + results[0][award])
+	# 	print('Nominees: ' + ', '.join(results[2][award]))
+	# 	print('Winner: ' + results[1][award])
+	# 	print('\n')
+
+	if ENABLE_EXTRA_QUERIES:
+		print('Getting extra categories...(this will take a long time)')
+		print(get_extra(data))
+
+'''
+CALL THE MAIN FUNCTION TO RUN THE PROGRAM.
+'''
 main()
